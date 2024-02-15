@@ -8,115 +8,130 @@
 
 ---
 - name: Averiguar los sistemas de ficheros
-  hosts: all
+  hosts: tomcat1
   ignore_errors: true
   ignore_unreachable: true
+  tags: q1
 
   tasks:
-    block:
-      - name: Averiguando el sistema de archivos
-        ansible.builtin.command:
-          cmd: "df -h"
-        register: outputtomcat
+    - name: Tomcat1
+      block:
+        - name: Averiguando el sistema de archivos
+          ansible.builtin.command:
+            cmd: "df -h"
+          register: outputtomcat
 
-      - name: Visualizar salida
-        ansible.builtin.debug:
-          msg: "{{outputtomcat}}"
-    when: ansible_distribution=='tomcat1'
+        - name: Visualizar salida
+          ansible.builtin.debug:
+            msg: "{{outputtomcat.stdout}}"
 
 - name: Recuperar la memoria libre de todos los rocky
-  hosts: all
+  hosts: rocky
   ignore_errors: true
   ignore_unreachable: true
+  tags: q2
 
   tasks:
-    block:
-      - name: Recuperar
-        ansible.builtin.shell:
-          cmd: "free"
-        register: outputrocky
+    - name: Rocky
+      block:
+        - name: Recuperar
+          ansible.builtin.shell:
+            cmd: "free"
+          register: outputrocky
 
-      - name: Visualizar
-        ansible.builtin.debug:
-          msg: "{{outputrocky}}"
-    when: ansible_distribution == 'rocky'
+        - name: Visualizar
+          ansible.builtin.debug:
+            msg: "{{outputrocky}}"
+      when: ansible_distribution=="Rocky"
 
 - name: Averiguar los usuarios que tengan bash
-  hosts: all
+  hosts: debian1
   ignore_errors: true
   ignore_unreachable: true
+  tags: q3
 
   tasks:
-    block: 
-      - name: Averiguar
-        ansible.builtin.shell:
-          cmd: "cat /etc/passwd | grep *bash*"
-        register: outputdeb
+    - name: Debian passwd
+      block: 
+        - name: Averiguar
+          ansible.builtin.shell:
+            cmd: "cat /etc/passwd | grep bash"
+          register: outputdeb
 
-      - name: Visualizar
-        ansible.builtin.debug:
-          msg: "{{outputdeb}}"
-      when: ansible_distribution == 'debian1'
+        - name: Visualizar
+          ansible.builtin.debug:
+            msg: "{{outputdeb}}"
+      when: ansible_distribution == 'Debian'
 
 - name: Copiar fichero
-  hosts: all
+  hosts: ubuntu1
   ignore_errors: true
   ignore_unreachable: true
   vars:
     srco: "/etc/netconfig"
     srcd: "/tmp"
+  tags: q4
 
   tasks:
-    block:
-      - name: Copiar
-        ansible.builtin.copy:
-          src: "{{srco}}"
-          dest: "{{srcd}}"
-          mode: "0777"
-          owner: yasuhiro
-          group: yasuhiro
-        register: outputcopy
+    - name: Copiar ubuntu1
+      block:
+        - name: Copiar
+          ansible.builtin.copy:
+            src: "{{srco}}"
+            dest: "{{srcd}}"
+            mode: "0777"
+            owner: ansible
+            group: ansible
+          register: outputcopy
 
-      - name: Visualizar
-        ansible.builtin.debug:
-          msg: "{{outputcopy}}"
-    when: ansible_distribution == 'ubuntu1'
+        - name: Visualizar
+          ansible.builtin.debug:
+            msg: "{{outputcopy}}"
+      when: ansible_distribution == 'Ubuntu'
   
 - name: Instalar GIT
-  hosts: all
+  hosts: mysql1
   ignore_errors: true
   ignore_unreachable: true
+  tags: q5
   vars:
     servicio: "git"
 
   tasks:
-    block: 
-      - name: Instalar
-        ansible.builtin.apt:
-          name: "{{servicio}}"
-          state: present
+    - name: Git mysql1
+      block: 
+        - name: Instalar
+          ansible.builtin.apt:
+            name: "{{servicio}}"
+            state: present
 
-      - name: Levantar servicio
-        ansible.builtin.service:
-          name: "{{servicio}}"
-          state: started
-    when: ansible_distribution == 'mysql1'
+        - name: Levantar servicio
+          ansible.builtin.service:
+            name: "{{servicio}}"
+            state: started
 
 - name: Parar y arrancar apache en los debian
-  hosts: all
+  hosts: debian
   ignore_errors: true
   ignore_unreachable: true
+  tags: q6
 
   tasks:
-    block:
-      - name: Parar
-        ansible.builtin.service:
-          name: apache2
-          state: stopped
+    - name: Apache debian
+      block:
+        - name: Instalar
+          ansible.builtin.apt:
+            name: apache2
+            state: present
 
-      - name: Arrancar
-        ansible.builtin.service:
-          name: apache2
-          state: started
-          enable: true
-    when: ansible_distribution == 'debian' 
+        - name: Parar
+          ansible.builtin.service:
+            name: apache2
+            state: stopped
+
+        - name: Arrancar
+          ansible.builtin.service:
+            name: apache2
+            state: started
+            enabled: true
+      when: ansible_distribution == 'Debian' 
