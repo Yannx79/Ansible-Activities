@@ -1,0 +1,17 @@
+[debian]
+debian1
+debian2
+
+[rocky]
+rocky1
+rocky2
+
+[ubuntu]
+ubuntu1
+
+[servidores_de_datos]
+mysql1
+
+[servidores_de_aplicaciones]
+tomcat1
+tomcat2

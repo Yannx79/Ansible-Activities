@@ -1,0 +1,11 @@
+---
+- name: Instalar Software
+  hosts: debian1
+  vars_files:
+    - variables.yml
+
+  tasks:
+    - name: Realizar la instalacion
+      ansible.builtin.apt:
+        name: "{{software}}"
+        state: present
