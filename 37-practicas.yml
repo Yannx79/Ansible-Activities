@@ -8,9 +8,10 @@
 
 ---
 - name: Averiguar los sistemas de ficheros
-  hosts: all
+  hosts: tomcat1
   ignore_errors: true
   ignore_unreachable: true
+  tags: q1
 
   tasks:
     - name: Tomcat1
@@ -22,13 +23,14 @@
 
         - name: Visualizar salida
           ansible.builtin.debug:
-            msg: "{{outputtomcat}}"
-      when: ansible_distribution=='tomcat1'
+            msg: "{{outputtomcat.stdout}}"
+      when: ansible_facts['distribution'] == 'tomcat1'
 
 - name: Recuperar la memoria libre de todos los rocky
-  hosts: all
+  hosts: rocky
   ignore_errors: true
   ignore_unreachable: true
+  tags: q2
 
   tasks:
     - name: Rocky
@@ -41,12 +43,13 @@
         - name: Visualizar
           ansible.builtin.debug:
             msg: "{{outputrocky}}"
-      when: ansible_distribution == 'rocky'
+      when: ansible_distribution=='rocky'
 
 - name: Averiguar los usuarios que tengan bash
-  hosts: all
+  hosts: debian1
   ignore_errors: true
   ignore_unreachable: true
+  tags: q3
 
   tasks:
     - name: Debian passwd
@@ -62,12 +65,13 @@
       when: ansible_distribution == 'debian1'
 
 - name: Copiar fichero
-  hosts: all
+  hosts: ubuntu1
   ignore_errors: true
   ignore_unreachable: true
   vars:
     srco: "/etc/netconfig"
     srcd: "/tmp"
+  tags: q4
 
   tasks:
     - name: Copiar ubuntu1
@@ -87,9 +91,10 @@
       when: ansible_distribution == 'ubuntu1'
   
 - name: Instalar GIT
-  hosts: all
+  hosts: mysql1
   ignore_errors: true
   ignore_unreachable: true
+  tags: q5
   vars:
     servicio: "git"
 
@@ -108,9 +113,10 @@
       when: ansible_distribution == 'mysql1'
 
 - name: Parar y arrancar apache en los debian
-  hosts: all
+  hosts: debian
   ignore_errors: true
   ignore_unreachable: true
+  tags: q6
 
   tasks:
     - name: Apache debian
