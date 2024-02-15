@@ -24,7 +24,6 @@
         - name: Visualizar salida
           ansible.builtin.debug:
             msg: "{{outputtomcat.stdout}}"
-      when: ansible_facts['distribution'] == 'tomcat1'
 
 - name: Recuperar la memoria libre de todos los rocky
   hosts: rocky
@@ -43,7 +42,7 @@
         - name: Visualizar
           ansible.builtin.debug:
             msg: "{{outputrocky}}"
-      when: ansible_distribution=='rocky'
+      when: ansible_distribution=="Rocky"
 
 - name: Averiguar los usuarios que tengan bash
   hosts: debian1
@@ -56,13 +55,13 @@
       block: 
         - name: Averiguar
           ansible.builtin.shell:
-            cmd: "cat /etc/passwd | grep *bash*"
+            cmd: "cat /etc/passwd | grep bash"
           register: outputdeb
 
         - name: Visualizar
           ansible.builtin.debug:
             msg: "{{outputdeb}}"
-      when: ansible_distribution == 'debian1'
+      when: ansible_distribution == 'Debian'
 
 - name: Copiar fichero
   hosts: ubuntu1
@@ -88,7 +87,7 @@
         - name: Visualizar
           ansible.builtin.debug:
             msg: "{{outputcopy}}"
-      when: ansible_distribution == 'ubuntu1'
+      when: ansible_distribution == 'Ubuntu'
   
 - name: Instalar GIT
   hosts: mysql1
@@ -110,7 +109,6 @@
           ansible.builtin.service:
             name: "{{servicio}}"
             state: started
-      when: ansible_distribution == 'mysql1'
 
 - name: Parar y arrancar apache en los debian
   hosts: debian
@@ -131,4 +129,4 @@
             name: apache2
             state: started
             enable: true
-      when: ansible_distribution == 'debian' 
+      when: ansible_distribution == 'Debian' 
