@@ -56,7 +56,7 @@
       - name: Visualizar
         ansible.builtin.debug:
           msg: "{{outputdeb}}"
-      when: ansible_distribution == 'debian1'
+    when: ansible_distribution == 'debian1'
 
 - name: Copiar fichero
   hosts: all
