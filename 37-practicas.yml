@@ -1,0 +1,122 @@
+# Probar comandos ad-hoc
+# 1 Con el módulo “command” averigua los sistemas de ficheros de la máquina tomcat1 (comando df).
+# 3 Recupera la memoria libre de todos los rocky. (comando free)
+# Averiguar en la maquina “debian1” con el módulo “Shell” aquellos usuarios que tengan la Shell “bash” como entrada (en el fichero passwd)
+# 3 Copiar el fichero /etc/netconfig al directorio /tmp de la maquina ubuntu1
+# 4 Instalar GIT en la máquina “mysql1” . Es un debian, hay que usar APT
+# 5 Parar y arrancar Apache en los debian. El servicio se llama apache2
+
+---
+- name: Averiguar los sistemas de ficheros
+  hosts: all
+  ignore_errors: true
+  ignore_unreachable: true
+
+  tasks:
+    block:
+      - name: Averiguando el sistema de archivos
+        ansible.builtin.command:
+          cmd: "df -h"
+        register: outputtomcat
+
+      - name: Visualizar salida
+        ansible.builtin.debug:
+          msg: "{{outputtomcat}}"
+    when: ansible_distribution=='tomcat1'
+
+- name: Recuperar la memoria libre de todos los rocky
+  hosts: all
+  ignore_errors: true
+  ignore_unreachable: true
+
+  tasks:
+    block:
+      - name: Recuperar
+        ansible.builtin.shell:
+          cmd: "free"
+        register: outputrocky
+
+      - name: Visualizar
+        ansible.builtin.debug:
+          msg: "{{outputrocky}}"
+    when: ansible_distribution == 'rocky'
+
+- name: Averiguar los usuarios que tengan bash
+  hosts: all
+  ignore_errors: true
+  ignore_unreachable: true
+
+  tasks:
+    block: 
+      - name: Averiguar
+        ansible.builtin.shell:
+          cmd: "cat /etc/passwd | grep *bash*"
+        register: outputdeb
+
+      - name: Visualizar
+        ansible.builtin.debug:
+          msg: "{{outputdeb}}"
+      when: ansible_distribution == 'debian1'
+
+- name: Copiar fichero
+  hosts: all
+  ignore_errors: true
+  ignore_unreachable: true
+  vars:
+    srco: "/etc/netconfig"
+    srcd: "/tmp"
+
+  tasks:
+    block:
+      - name: Copiar
+        ansible.builtin.copy:
+          src: "{{srco}}"
+          dest: "{{srcd}}"
+          mode: "0777"
+          owner: yasuhiro
+          group: yasuhiro
+        register: outputcopy
+
+      - name: Visualizar
+        ansible.builtin.debug:
+          msg: "{{outputcopy}}"
+    when: ansible_distribution == 'ubuntu1'
+  
+- name: Instalar GIT
+  hosts: all
+  ignore_errors: true
+  ignore_unreachable: true
+  vars:
+    servicio: "git"
+
+  tasks:
+    block: 
+      - name: Instalar
+        ansible.builtin.apt:
+          name: "{{servicio}}"
+          state: present
+
+      - name: Levantar servicio
+        ansible.builtin.service:
+          name: "{{servicio}}"
+          state: started
+    when: ansible_distribution == 'mysql1'
+
+- name: Parar y arrancar apache en los debian
+  hosts: all
+  ignore_errors: true
+  ignore_unreachable: true
+
+  tasks:
+    block:
+      - name: Parar
+        ansible.builtin.service:
+          name: apache2
+          state: stopped
+
+      - name: Arrancar
+        ansible.builtin.service:
+          name: apache2
+          state: started
+          enable: true
+    when: ansible_distribution == 'debian'
