@@ -1,0 +1,36 @@
+---
+- name: Prueba con Varibles
+  hosts: debian1
+  vars:
+    route: /etc/motd
+    message: 
+      - "Bienvenido a tu maquina"
+      - "Espero que disfrutes del desarrollo"
+    message2:
+      empresa: Yannick F.
+      curso: Ansible
+      nivel: alto
+      responsables:
+        - Yannick
+        - Yasuhiro
+        - Funes
+        - Chavez
+
+  tasks:
+    - name: Mensaje de bienvenidad
+      ansible.builtin.copy:
+        content: "{{message2}}" 
+        dest: "{{route}}"
+      register: output
+
+    - name: Visualizar
+      ansible.builtin.debug:
+        msg: "{{output}}"
+
+    - name: Visualizar 2
+      ansible.builtin.debug:
+        msg: "{{message2.nivel}}"
+
+    - name: Visualizar 3
+      ansible.builtin.debug:
+        msg: "{{message2.responsables}} y el segundo responsable es {{message.responsable[1]}}"
