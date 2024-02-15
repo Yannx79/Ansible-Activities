@@ -80,8 +80,8 @@
             src: "{{srco}}"
             dest: "{{srcd}}"
             mode: "0777"
-            owner: yasuhiro
-            group: yasuhiro
+            owner: ansible
+            group: ansible
           register: outputcopy
 
         - name: Visualizar
@@ -119,6 +119,11 @@
   tasks:
     - name: Apache debian
       block:
+        - name: Instalar
+          ansible.builtin.apt:
+            name: apache2
+            state: present
+
         - name: Parar
           ansible.builtin.service:
             name: apache2
@@ -128,5 +133,5 @@
           ansible.builtin.service:
             name: apache2
             state: started
-            enable: true
+            enabled: true
       when: ansible_distribution == 'Debian' 
