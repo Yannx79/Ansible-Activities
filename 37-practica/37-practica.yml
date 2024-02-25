@@ -8,7 +8,7 @@
 
 ---
 - name: Averiguar los sistemas de ficheros
-  hosts: tomcat1
+  hosts: all
   ignore_errors: true
   ignore_unreachable: true
   tags: q1
