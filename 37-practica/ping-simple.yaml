@@ -1,0 +1,8 @@
+---
+name: Realizar ping
+host: 192.168.0.69
+
+tasks:
+  - name: Realizar ping
+    ansible.builtin.ping:
+      data: "<ok>"
